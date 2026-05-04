@@ -17,7 +17,7 @@ export default function SertifikatPage() {
       date: "12 Okt 2026",
       score: 95,
       credentialId: "BKPSDM-2026-01029",
-      image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      image: "/images/Asset_kota/Asset 7.png",
       year: "2026"
     },
     {
@@ -26,7 +26,7 @@ export default function SertifikatPage() {
       date: "05 Sep 2025",
       score: 88,
       credentialId: "BKPSDM-2025-00842",
-      image: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      image: "/images/Asset_kota/Asset 8.png",
       year: "2025"
     },
     {
@@ -35,7 +35,7 @@ export default function SertifikatPage() {
       date: "21 Agu 2025",
       score: 100,
       credentialId: "BKPSDM-2025-00611",
-      image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      image: "/images/Asset_kota/Asset 9.png",
       year: "2025"
     }
   ];
@@ -48,7 +48,7 @@ export default function SertifikatPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-transparent flex flex-col">
       <Header />
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full">

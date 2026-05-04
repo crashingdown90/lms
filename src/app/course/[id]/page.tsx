@@ -177,7 +177,7 @@ export default function CoursePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-transparent flex flex-col">
       <Header />
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
@@ -208,7 +208,7 @@ export default function CoursePage() {
                 ref={videoRef}
                 className="w-full h-full object-contain bg-black"
                 src="https://www.w3schools.com/html/mov_bbb.mp4"
-                poster="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                poster="/images/Asset_kota/Asset 11.png"
                 onTimeUpdate={handleTimeUpdate}
                 onLoadedMetadata={(e) => {
                   setDuration(e.currentTarget.duration);

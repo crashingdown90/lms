@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ 
+const hanken = Hanken_Grotesk({ 
   subsets: ["latin"],
-  variable: "--font-inter", 
+  variable: "--font-hanken", 
 });
 
 export const metadata: Metadata = {
-  title: "LMS BKPSDM | Pemerintah Kota Sukabumi",
-  description: "Learning Management System (LMS) BKPSDM Pemerintah Kota Sukabumi untuk peningkatan kompetensi ASN.",
+  title: "SOLASIDO | Pemkot Sukabumi",
+  description: "Sistem Online Pembelajaran Berbasis Video (SOLASIDO). Inovasi pembelajaran mandiri berbasis microlearning untuk ASN Pemerintah Kota Sukabumi.",
 };
 
 export default function RootLayout({
@@ -19,8 +19,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
-      <body className={`${inter.variable} font-sans antialiased bg-background text-foreground min-h-screen`}>
-        {children}
+      <body className={`${hanken.variable} font-sans antialiased bg-background text-foreground min-h-screen relative`}>
+        <div className="relative z-0">
+          {children}
+        </div>
       </body>
     </html>
   );

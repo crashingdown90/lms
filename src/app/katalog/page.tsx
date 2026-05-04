@@ -10,7 +10,7 @@ export default function KatalogPage() {
       title: "Tata Kelola Pemerintahan yang Baik (Good Corporate Governance)",
       instructor: "Dr. Budi Santoso, M.Si",
       duration: "4 Jam 30 Menit",
-      image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      image: "/images/Asset_kota/Asset 2.png",
       category: "Kepemimpinan",
     },
     {
@@ -18,7 +18,7 @@ export default function KatalogPage() {
       title: "Etika Pelayanan Publik Berbasis Digital",
       instructor: "Dra. Siti Aminah",
       duration: "2 Jam 15 Menit",
-      image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      image: "/images/Asset_kota/Asset 3.png",
       category: "Pelayanan Publik",
     },
     {
@@ -26,7 +26,7 @@ export default function KatalogPage() {
       title: "Pencegahan Korupsi di Instansi Pemerintah",
       instructor: "KPK RI & Inspektorat Daerah",
       duration: "3 Jam 45 Menit",
-      image: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      image: "/images/Asset_kota/Asset 5.png",
       category: "Integritas",
     },
     {
@@ -34,13 +34,13 @@ export default function KatalogPage() {
       title: "Literasi Keamanan Digital Bagi ASN",
       instructor: "BSSN & Diskominfo",
       duration: "2 Jam",
-      image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      image: "/images/Asset_kota/Asset 6.png",
       category: "Teknologi",
     }
   ];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-transparent flex flex-col">
       <Header />
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">

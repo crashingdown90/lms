@@ -20,7 +20,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex font-sans">
+    <div className="min-h-screen bg-transparent flex font-sans">
       
       {/* SIDEBAR BACKDROP FOR MOBILE */}
       {isSidebarOpen && (
@@ -31,18 +31,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       )}
 
       {/* SIDEBAR ADMIN */}
-      <aside className={`w-64 bg-[#0B1120] text-slate-300 flex flex-col fixed inset-y-0 left-0 z-30 shadow-2xl transition-transform duration-300 ease-in-out lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="p-6 border-b border-white/10 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary to-blue-600 rounded-xl flex items-center justify-center font-bold text-white shadow-lg shadow-primary/20 border border-white/10">
-              KS
+      <aside className={`w-64 bg-[#141414] text-slate-300 flex flex-col fixed inset-y-0 left-0 z-30 shadow-2xl transition-transform duration-300 ease-in-out lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="p-6 border-b border-white/10 flex justify-between items-center relative overflow-hidden">
+          {/* Subtle watermark in header */}
+          <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-5 pointer-events-none">
+            <img src="/images/Asset_kota/Asset 12.png" alt="" className="w-full h-full object-cover mix-blend-screen" />
+          </div>
+          <div className="flex items-center gap-3 relative z-10">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center font-black text-primary-foreground shadow-lg shadow-primary/20 border border-primary/50 text-xl">
+              ▶
             </div>
             <div>
               <h1 className="font-bold text-white text-lg leading-tight">Admin Pusat</h1>
-              <p className="text-[10px] text-slate-400 font-medium">BKPSDM Kota Sukabumi</p>
+              <p className="text-[10px] text-primary font-medium tracking-wide">SOLASIDO SUKABUMI</p>
             </div>
           </div>
-          <button className="lg:hidden text-slate-400 hover:text-white" onClick={() => setIsSidebarOpen(false)}>
+          <button className="lg:hidden text-slate-400 hover:text-white relative z-10" onClick={() => setIsSidebarOpen(false)}>
             <X size={20} />
           </button>
         </div>
@@ -53,17 +57,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Link 
               href="/admin"
               onClick={() => setIsSidebarOpen(false)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg font-bold transition-colors text-left ${isActive('/admin') ? "bg-primary/15 text-white border border-primary/20 shadow-sm" : "hover:bg-white/5 hover:text-white"}`}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg font-bold transition-colors text-left ${isActive('/admin') ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(141,198,63,0.15)]" : "hover:bg-white/5 hover:text-white"}`}
             >
-              <PieChart size={18} className={`shrink-0 ${isActive('/admin') ? "text-primary-light" : ""}`} /> 
+              <PieChart size={18} className={`shrink-0 ${isActive('/admin') ? "text-primary-foreground" : ""}`} /> 
               <span className="truncate">Ringkasan Utama</span>
             </Link>
             <Link 
               href="/admin/analytics"
               onClick={() => setIsSidebarOpen(false)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-left ${isActive('/admin/analytics') ? "bg-primary/15 text-white border border-primary/20 shadow-sm font-bold" : "hover:bg-white/5 hover:text-white font-medium"}`}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-left ${isActive('/admin/analytics') ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(141,198,63,0.15)] font-bold" : "hover:bg-white/5 hover:text-white font-medium"}`}
             >
-              <Activity size={18} className={`shrink-0 ${isActive('/admin/analytics') ? "text-primary-light" : ""}`} /> 
+              <Activity size={18} className={`shrink-0 ${isActive('/admin/analytics') ? "text-primary-foreground" : ""}`} /> 
               <span className="truncate">Analitik Lanjutan</span>
             </Link>
             
@@ -71,29 +75,29 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Link 
               href="/admin/users"
               onClick={() => setIsSidebarOpen(false)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors justify-between text-left ${isActive('/admin/users') ? "bg-primary/15 text-white border border-primary/20 shadow-sm font-bold" : "hover:bg-white/5 hover:text-white font-medium"}`}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors justify-between text-left ${isActive('/admin/users') ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(141,198,63,0.15)] font-bold" : "hover:bg-white/5 hover:text-white font-medium"}`}
             >
               <div className="flex items-center gap-3 min-w-0">
-                <Users size={18} className={`shrink-0 ${isActive('/admin/users') ? "text-primary-light" : ""}`} /> 
+                <Users size={18} className={`shrink-0 ${isActive('/admin/users') ? "text-primary-foreground" : ""}`} /> 
                 <span className="truncate">Data Pegawai</span>
               </div>
-              <span className="bg-primary/20 text-primary-light text-[10px] py-0.5 px-2 rounded-full font-bold shrink-0">3.2k</span>
+              <span className="bg-primary/20 text-primary-foreground text-[10px] py-0.5 px-2 rounded-full font-bold shrink-0">3.2k</span>
             </Link>
             <Link 
               href="/admin/modules"
               onClick={() => setIsSidebarOpen(false)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-left ${isActive('/admin/modules') ? "bg-primary/15 text-white border border-primary/20 shadow-sm font-bold" : "hover:bg-white/5 hover:text-white font-medium"}`}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-left ${isActive('/admin/modules') ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(141,198,63,0.15)] font-bold" : "hover:bg-white/5 hover:text-white font-medium"}`}
             >
-              <BookOpen size={18} className={`shrink-0 ${isActive('/admin/modules') ? "text-primary-light" : ""}`} /> 
+              <BookOpen size={18} className={`shrink-0 ${isActive('/admin/modules') ? "text-primary-foreground" : ""}`} /> 
               <span className="truncate">Modul Pelatihan</span>
             </Link>
             <Link 
               href="/admin/certificates"
               onClick={() => setIsSidebarOpen(false)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors justify-between text-left ${isActive('/admin/certificates') ? "bg-primary/15 text-white border border-primary/20 shadow-sm font-bold" : "hover:bg-white/5 hover:text-white font-medium"}`}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors justify-between text-left ${isActive('/admin/certificates') ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(141,198,63,0.15)] font-bold" : "hover:bg-white/5 hover:text-white font-medium"}`}
             >
               <div className="flex items-center gap-3 min-w-0">
-                <Award size={18} className={`shrink-0 ${isActive('/admin/certificates') ? "text-primary-light" : ""}`} /> 
+                <Award size={18} className={`shrink-0 ${isActive('/admin/certificates') ? "text-primary-foreground" : ""}`} /> 
                 <span className="truncate">Validasi Sertifikat</span>
               </div>
               <span className="bg-error/20 text-error text-[10px] py-0.5 px-2 rounded-full font-bold shrink-0">3</span>
@@ -101,10 +105,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Link 
               href="/admin/helpdesk"
               onClick={() => setIsSidebarOpen(false)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors justify-between text-left ${isActive('/admin/helpdesk') ? "bg-primary/15 text-white border border-primary/20 shadow-sm font-bold" : "hover:bg-white/5 hover:text-white font-medium"}`}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors justify-between text-left ${isActive('/admin/helpdesk') ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(141,198,63,0.15)] font-bold" : "hover:bg-white/5 hover:text-white font-medium"}`}
             >
               <div className="flex items-center gap-3 min-w-0">
-                <MessageSquare size={18} className={`shrink-0 ${isActive('/admin/helpdesk') ? "text-primary-light" : ""}`} /> 
+                <MessageSquare size={18} className={`shrink-0 ${isActive('/admin/helpdesk') ? "text-primary-foreground" : ""}`} /> 
                 <span className="truncate">Pusat Bantuan</span>
               </div>
               <span className="bg-amber-500/20 text-amber-500 text-[10px] py-0.5 px-2 rounded-full font-bold shrink-0">2</span>
@@ -114,17 +118,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Link 
               href="/admin/logs"
               onClick={() => setIsSidebarOpen(false)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-left ${isActive('/admin/logs') ? "bg-primary/15 text-white border border-primary/20 shadow-sm font-bold" : "hover:bg-white/5 hover:text-white font-medium"}`}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-left ${isActive('/admin/logs') ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(141,198,63,0.15)] font-bold" : "hover:bg-white/5 hover:text-white font-medium"}`}
             >
-              <ClipboardList size={18} className={`shrink-0 ${isActive('/admin/logs') ? "text-primary-light" : ""}`} /> 
+              <ClipboardList size={18} className={`shrink-0 ${isActive('/admin/logs') ? "text-primary-foreground" : ""}`} /> 
               <span className="truncate">Log Aktivitas</span>
             </Link>
             <Link 
               href="/admin/settings"
               onClick={() => setIsSidebarOpen(false)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-left ${isActive('/admin/settings') ? "bg-primary/15 text-white border border-primary/20 shadow-sm font-bold" : "hover:bg-white/5 hover:text-white font-medium"}`}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-left ${isActive('/admin/settings') ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(141,198,63,0.15)] font-bold" : "hover:bg-white/5 hover:text-white font-medium"}`}
             >
-              <Settings size={18} className={`shrink-0 ${isActive('/admin/settings') ? "text-primary-light" : ""}`} /> 
+              <Settings size={18} className={`shrink-0 ${isActive('/admin/settings') ? "text-primary-foreground" : ""}`} /> 
               <span className="truncate">Konfigurasi LMS</span>
             </Link>
           </nav>
@@ -150,8 +154,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Menu size={24} />
             </button>
             <h2 className="font-bold text-foreground text-lg hidden sm:block">Command Center</h2>
-            <span className="px-2.5 py-1 bg-green-50 border border-green-200 text-success text-[10px] font-bold rounded-full hidden sm:flex items-center gap-1.5 uppercase tracking-widest animate-pulse">
-              <span className="w-1.5 h-1.5 bg-success rounded-full shadow-[0_0_5px_#22c55e]"></span> Sistem Online
+            <span className="px-2.5 py-1 bg-primary-light border border-primary/30 text-primary text-[10px] font-bold rounded-full hidden sm:flex items-center gap-1.5 uppercase tracking-widest animate-pulse">
+              <span className="w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_5px_#8DC63F]"></span> Sistem Online
             </span>
           </div>
 
@@ -165,7 +169,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <p className="text-sm font-bold text-foreground leading-none group-hover:text-primary transition-colors">Admin Super</p>
                 <p className="text-[10px] text-muted font-medium mt-0.5">Kepala BKPSDM</p>
               </div>
-              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-slate-800 to-slate-700 text-white flex items-center justify-center font-bold border-2 border-white shadow-sm">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-accent text-primary-foreground flex items-center justify-center font-bold border-2 border-white shadow-sm">
                 <ShieldCheck size={20} />
               </div>
             </div>

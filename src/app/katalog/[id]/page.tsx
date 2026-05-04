@@ -20,7 +20,7 @@ export default function SyllabusPage({ params }: { params: { id: string } }) {
     rating: 4.8,
     reviews: 320,
     category: "Kompetensi Manajerial",
-    image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    image: "/images/Asset_kota/Asset 10.png",
     description: "Pelatihan ini dirancang khusus untuk Aparatur Sipil Negara (ASN) di lingkungan Pemerintah Kota Sukabumi guna memahami fundamental transformasi digital dalam birokrasi pemerintahan. Anda akan mempelajari bagaimana mengintegrasikan teknologi ke dalam pelayanan publik untuk mencapai tata kelola yang transparan, akuntabel, dan efisien.",
     objectives: [
       "Memahami konsep dasar E-Government dan Sistem Pemerintahan Berbasis Elektronik (SPBE).",

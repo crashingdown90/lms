@@ -9,16 +9,16 @@ export default function Footer() {
           {/* Brand Column */}
           <div className="col-span-1 md:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold shrink-0 shadow-sm">
-                KS
+              <div className="w-10 h-10 bg-gradient-to-tr from-primary to-accent rounded-full flex items-center justify-center text-primary-foreground font-bold shrink-0 shadow-[0_0_15px_rgba(141,198,63,0.3)]">
+                <span className="text-xl">▶</span>
               </div>
               <div>
-                <h2 className="font-bold text-foreground text-lg leading-tight">LMS BKPSDM</h2>
-                <p className="text-[10px] text-muted font-medium">Pemerintah Kota Sukabumi</p>
+                <h2 className="font-bold text-foreground text-lg leading-tight">SOLASIDO</h2>
+                <p className="text-[10px] text-muted font-medium">Pemkot Sukabumi</p>
               </div>
             </div>
             <p className="text-sm text-muted mb-6 leading-relaxed">
-              Platform pembelajaran elektronik resmi untuk meningkatkan kompetensi dan profesionalisme Aparatur Sipil Negara di lingkungan Pemerintah Kota Sukabumi.
+              Sistem Online Pembelajaran Berbasis Video (SOLASIDO). Inovasi pembelajaran mandiri berbasis microlearning yang memungkinkan ASN mengakses materi pembelajaran dalam bentuk video singkat kapan saja dan di mana saja.
             </p>
           </div>
 

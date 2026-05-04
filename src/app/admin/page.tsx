@@ -13,10 +13,10 @@ export default function AdminOverview() {
   ];
   
   const skpdDistribution = [
-    { name: "Dinas Pendidikan", percentage: 35, color: "bg-blue-500" },
+    { name: "Dinas Pendidikan", percentage: 35, color: "bg-primary" },
     { name: "Dinas Kesehatan", percentage: 25, color: "bg-green-500" },
     { name: "Kecamatan & Kelurahan", percentage: 20, color: "bg-amber-500" },
-    { name: "Diskominfo", percentage: 12, color: "bg-purple-500" },
+    { name: "Diskominfo", percentage: 12, color: "bg-primary-hover" },
     { name: "Lainnya", percentage: 8, color: "bg-slate-400" },
   ];
   
@@ -29,21 +29,23 @@ export default function AdminOverview() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
       {/* Top Row: Welcome & Server Health */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-gradient-to-br from-primary via-blue-700 to-blue-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden flex flex-col justify-center">
+        <div className="lg:col-span-2 bg-primary rounded-2xl p-6 sm:p-8 text-primary-foreground shadow-xl relative overflow-hidden flex flex-col justify-center">
           <div className="relative z-10 flex justify-between items-center">
             <div>
               <h2 className="text-2xl sm:text-3xl font-black mb-2">Pantauan Kinerja LMS</h2>
-              <p className="text-blue-100 max-w-lg text-sm sm:text-base leading-relaxed">
+              <p className="text-primary-foreground/80 max-w-lg text-sm sm:text-base leading-relaxed font-medium">
                 Ringkasan komprehensif partisipasi pelatihan ASN, tingkat kelulusan modul, dan status infrastruktur server.
               </p>
             </div>
             <div className="hidden sm:block">
-              <div className="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20">
-                <TrendingUp size={48} className="text-white" />
+              <div className="w-24 h-24 bg-black/5 rounded-full flex items-center justify-center backdrop-blur-sm border border-black/10">
+                <TrendingUp size={48} className="text-primary-foreground" />
               </div>
             </div>
           </div>
-          <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-[url('https://www.transparenttextures.com/patterns/connected.png')] opacity-20"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-20">
+            <img src="/images/Asset_kota/Asset 12.png" alt="" className="w-full h-full object-cover mix-blend-multiply" />
+          </div>
         </div>
 
         <div className="lg:col-span-1 bg-white border border-border rounded-2xl p-6 shadow-sm flex flex-col justify-between">
@@ -78,7 +80,7 @@ export default function AdminOverview() {
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-2xl border border-border shadow-sm relative overflow-hidden group hover:border-primary/30 transition-colors">
           <div className="flex justify-between items-start mb-4">
-            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 bg-primary-light text-primary rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
               <Users size={24} />
             </div>
             <div className="text-right">
@@ -87,12 +89,12 @@ export default function AdminOverview() {
             </div>
           </div>
           <div className="flex items-center gap-2 text-xs font-bold text-success bg-success/10 px-2 py-1 rounded inline-flex">↑ 12.5% bln ini</div>
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary"></div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-border shadow-sm relative overflow-hidden group hover:border-amber-500/30 transition-colors">
+        <div className="bg-white p-6 rounded-2xl border border-border shadow-sm relative overflow-hidden group hover:border-accent/30 transition-colors">
           <div className="flex justify-between items-start mb-4">
-            <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 bg-accent/20 text-[#141414] rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
               <BookOpen size={24} />
             </div>
             <div className="text-right">
@@ -101,12 +103,12 @@ export default function AdminOverview() {
             </div>
           </div>
           <div className="flex items-center gap-2 text-xs font-bold text-success bg-success/10 px-2 py-1 rounded inline-flex">↑ 8.2% bln ini</div>
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-amber-500"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-accent"></div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-border shadow-sm relative overflow-hidden group hover:border-green-500/30 transition-colors">
+        <div className="bg-white p-6 rounded-2xl border border-border shadow-sm relative overflow-hidden group hover:border-[#141414]/30 transition-colors">
           <div className="flex justify-between items-start mb-4">
-            <div className="w-12 h-12 bg-green-50 text-green-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 bg-[#141414]/10 text-[#141414] rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
               <CheckCircle size={24} />
             </div>
             <div className="text-right">
@@ -120,12 +122,12 @@ export default function AdminOverview() {
               <div className="h-full bg-success w-[88%]"></div>
             </div>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-green-500"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#141414]"></div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-border shadow-sm relative overflow-hidden group hover:border-purple-500/30 transition-colors">
+        <div className="bg-white p-6 rounded-2xl border border-border shadow-sm relative overflow-hidden group hover:border-primary-hover/30 transition-colors">
           <div className="flex justify-between items-start mb-4">
-            <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 bg-primary-light text-primary-hover rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
               <Award size={24} />
             </div>
             <div className="text-right">
@@ -133,10 +135,10 @@ export default function AdminOverview() {
               <h3 className="text-3xl font-black text-foreground">12.1k</h3>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-xs font-bold text-warning bg-warning/10 px-2 py-1 rounded inline-flex text-amber-700">
+          <div className="flex items-center gap-2 text-xs font-bold text-[#141414] bg-accent/30 px-2 py-1 rounded inline-flex">
             <AlertCircle size={12}/> 3 Butuh Validasi
           </div>
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-purple-500"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary-hover"></div>
         </div>
       </div>
 

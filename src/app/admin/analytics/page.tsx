@@ -17,23 +17,23 @@ export default function AdminAnalytics() {
 
       {/* Quick Deep Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
+        <div className="bg-primary rounded-2xl p-6 text-primary-foreground shadow-md relative overflow-hidden">
           <Activity className="absolute right-[-10px] bottom-[-10px] w-24 h-24 opacity-20" />
-          <p className="text-white/80 text-xs font-bold uppercase tracking-wider mb-2">Rata-rata Waktu Akses</p>
+          <p className="text-primary-foreground/70 text-xs font-bold uppercase tracking-wider mb-2">Rata-rata Waktu Akses</p>
           <h3 className="text-4xl font-black mb-1">42m 15s</h3>
-          <p className="text-white/90 text-sm">per sesi pembelajaran</p>
+          <p className="text-primary-foreground/90 text-sm font-medium">per sesi pembelajaran</p>
         </div>
-        <div className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
-          <FileText className="absolute right-[-10px] bottom-[-10px] w-24 h-24 opacity-20" />
-          <p className="text-white/80 text-xs font-bold uppercase tracking-wider mb-2">Tingkat Penyelesaian Modul</p>
-          <h3 className="text-4xl font-black mb-1">85.4%</h3>
-          <p className="text-white/90 text-sm">naik 12% dari bulan lalu</p>
+        <div className="bg-[#141414] rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
+          <FileText className="absolute right-[-10px] bottom-[-10px] w-24 h-24 opacity-10 text-white" />
+          <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Tingkat Penyelesaian Modul</p>
+          <h3 className="text-4xl font-black mb-1 text-primary">85.4%</h3>
+          <p className="text-slate-300 text-sm font-medium">naik 12% dari bulan lalu</p>
         </div>
-        <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
+        <div className="bg-accent rounded-2xl p-6 text-[#141414] shadow-md relative overflow-hidden">
           <TrendingUp className="absolute right-[-10px] bottom-[-10px] w-24 h-24 opacity-20" />
-          <p className="text-white/80 text-xs font-bold uppercase tracking-wider mb-2">Nilai Rata-rata Kuis</p>
+          <p className="text-[#141414]/70 text-xs font-bold uppercase tracking-wider mb-2">Nilai Rata-rata Kuis</p>
           <h3 className="text-4xl font-black mb-1">88.2</h3>
-          <p className="text-white/90 text-sm">dari batas minimum 70.0</p>
+          <p className="text-[#141414]/90 text-sm font-medium">dari batas minimum 70.0</p>
         </div>
       </div>
 
@@ -49,8 +49,8 @@ export default function AdminAnalytics() {
             ].map((bar, i) => (
               <div key={i} className="flex flex-col items-center flex-1 h-full justify-end group">
                 <span className="text-xs font-bold text-slate-500 mb-2 opacity-0 group-hover:opacity-100 transition-opacity">{bar.val}%</span>
-                <div className="w-full max-w-[40px] bg-indigo-100 rounded-t-md relative overflow-hidden h-[150px] flex flex-col justify-end">
-                  <div className="w-full bg-indigo-500 rounded-t-sm transition-all duration-500 group-hover:bg-indigo-600" style={{ height: `${bar.val}%` }}></div>
+                <div className="w-full max-w-[40px] bg-primary/10 rounded-t-md relative overflow-hidden h-[150px] flex flex-col justify-end">
+                  <div className="w-full bg-primary rounded-t-sm transition-all duration-500 group-hover:bg-primary-hover" style={{ height: `${bar.val}%` }}></div>
                 </div>
                 <span className="text-xs font-bold text-muted mt-3">{bar.label}</span>
               </div>
@@ -64,29 +64,29 @@ export default function AdminAnalytics() {
           <div className="flex flex-col gap-5 justify-center h-48">
             <div>
               <div className="flex justify-between text-sm font-bold mb-2">
-                <span className="flex items-center gap-2"><div className="w-3 h-3 bg-blue-500 rounded-full"></div> Desktop / PC Kantor</span>
+                <span className="flex items-center gap-2"><div className="w-3 h-3 bg-primary rounded-full"></div> Desktop / PC Kantor</span>
                 <span>65%</span>
               </div>
               <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-blue-500 w-[65%]"></div>
+                <div className="h-full bg-primary w-[65%]"></div>
               </div>
             </div>
             <div>
               <div className="flex justify-between text-sm font-bold mb-2">
-                <span className="flex items-center gap-2"><div className="w-3 h-3 bg-sky-400 rounded-full"></div> Smartphone (Mobile)</span>
+                <span className="flex items-center gap-2"><div className="w-3 h-3 bg-accent rounded-full"></div> Smartphone (Mobile)</span>
                 <span>28%</span>
               </div>
               <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-sky-400 w-[28%]"></div>
+                <div className="h-full bg-accent w-[28%]"></div>
               </div>
             </div>
             <div>
               <div className="flex justify-between text-sm font-bold mb-2">
-                <span className="flex items-center gap-2"><div className="w-3 h-3 bg-indigo-300 rounded-full"></div> Tablet</span>
+                <span className="flex items-center gap-2"><div className="w-3 h-3 bg-[#141414] rounded-full"></div> Tablet</span>
                 <span>7%</span>
               </div>
               <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-indigo-300 w-[7%]"></div>
+                <div className="h-full bg-[#141414] w-[7%]"></div>
               </div>
             </div>
           </div>

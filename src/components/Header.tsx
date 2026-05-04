@@ -23,12 +23,12 @@ export default function Header() {
         {/* Logo & Brand */}
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold shrink-0 shadow-sm">
-              KS
+            <div className="w-10 h-10 bg-gradient-to-tr from-primary to-accent rounded-full flex items-center justify-center text-primary-foreground font-bold shrink-0 shadow-[0_0_15px_rgba(141,198,63,0.3)]">
+              <span className="text-xl">▶</span>
             </div>
             <div className="hidden sm:block">
-              <h1 className="font-bold text-foreground text-lg leading-tight group-hover:text-primary transition-colors">LMS BKPSDM</h1>
-              <p className="text-[10px] text-muted font-medium">Pemerintah Kota Sukabumi</p>
+              <h1 className="font-bold text-foreground text-lg leading-tight group-hover:text-primary transition-colors">SOLASIDO</h1>
+              <p className="text-[10px] text-muted font-medium">Pemkot Sukabumi</p>
             </div>
           </Link>
         </div>

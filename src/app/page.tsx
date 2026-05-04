@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { PlayCircle, BookOpen, CheckCircle, Award, ChevronRight, Play, User, Calendar, Megaphone, Clock } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -16,7 +17,7 @@ export default function Dashboard() {
       duration: "4 Jam 30 Menit",
       progress: 75,
       status: "ongoing",
-      image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      image: "/images/Asset_kota/Asset 2.png"
     },
     {
       id: 2,
@@ -25,7 +26,7 @@ export default function Dashboard() {
       duration: "2 Jam 15 Menit",
       progress: 0,
       status: "not_started",
-      image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      image: "/images/Asset_kota/Asset 3.png"
     },
     {
       id: 3,
@@ -34,30 +35,31 @@ export default function Dashboard() {
       duration: "3 Jam",
       progress: 100,
       status: "completed",
-      image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      image: "/images/Asset_kota/Asset 4.png"
     }
   ];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-transparent flex flex-col">
       <Header />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Welcome Banner */}
-        <section className="mb-8 sm:mb-10 bg-gradient-to-r from-primary to-primary-hover rounded-2xl p-6 sm:p-8 text-white shadow-subtle relative overflow-hidden">
+        <section className="mb-8 sm:mb-10 bg-primary rounded-2xl p-6 sm:p-8 text-white shadow-subtle relative overflow-hidden">
+          <div className="absolute inset-0 z-0">
+             <img src="/images/Asset_kota/Asset 7.png" alt="" className="w-full h-full object-cover opacity-20 mix-blend-overlay" />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary/40 z-0"></div>
           <div className="relative z-10">
             <h2 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3">Selamat Pagi, Drefan! 👋</h2>
             <p className="text-primary-light max-w-2xl text-base sm:text-lg opacity-90">Mari tingkatkan kompetensi Anda hari ini. Anda memiliki 1 materi yang belum diselesaikan.</p>
           </div>
-          {/* Decorative shapes */}
-          <div className="absolute top-0 right-0 w-48 sm:w-64 h-48 sm:h-64 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/3 blur-2xl sm:blur-none"></div>
-          <div className="absolute bottom-0 right-16 sm:right-32 w-24 sm:w-32 h-24 sm:h-32 bg-white opacity-10 rounded-full translate-y-1/2"></div>
         </section>
 
         {/* Quick Stats */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-10">
           <div className="bg-card rounded-xl p-5 sm:p-6 shadow-subtle border border-border flex items-center gap-4 transition-all hover:-translate-y-1 hover:shadow-md hover:border-primary/30">
-            <div className="w-12 h-12 rounded-full bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-full bg-primary-light text-primary flex items-center justify-center flex-shrink-0">
               <BookOpen size={24} />
             </div>
             <div className="min-w-0">
@@ -65,8 +67,8 @@ export default function Dashboard() {
               <p className="text-xs sm:text-sm text-muted font-medium truncate">Pelatihan Aktif</p>
             </div>
           </div>
-          <div className="bg-card rounded-xl p-5 sm:p-6 shadow-subtle border border-border flex items-center gap-4 transition-all hover:-translate-y-1 hover:shadow-md hover:border-success/30">
-            <div className="w-12 h-12 rounded-full bg-green-50 text-success flex items-center justify-center flex-shrink-0">
+          <div className="bg-card rounded-xl p-5 sm:p-6 shadow-subtle border border-border flex items-center gap-4 transition-all hover:-translate-y-1 hover:shadow-md hover:border-accent/30">
+            <div className="w-12 h-12 rounded-full bg-accent/20 text-[#141414] flex items-center justify-center flex-shrink-0">
               <CheckCircle size={24} />
             </div>
             <div className="min-w-0">
@@ -74,8 +76,8 @@ export default function Dashboard() {
               <p className="text-xs sm:text-sm text-muted font-medium truncate">Pelatihan Selesai</p>
             </div>
           </div>
-          <div className="bg-card rounded-xl p-5 sm:p-6 shadow-subtle border border-border flex items-center gap-4 transition-all hover:-translate-y-1 hover:shadow-md hover:border-warning/30">
-            <div className="w-12 h-12 rounded-full bg-amber-50 text-warning flex items-center justify-center flex-shrink-0">
+          <div className="bg-card rounded-xl p-5 sm:p-6 shadow-subtle border border-border flex items-center gap-4 transition-all hover:-translate-y-1 hover:shadow-md hover:border-[#141414]/30">
+            <div className="w-12 h-12 rounded-full bg-[#141414]/10 text-[#141414] flex items-center justify-center flex-shrink-0">
               <Award size={24} />
             </div>
             <div className="min-w-0">
@@ -136,7 +138,7 @@ export default function Dashboard() {
             </h3>
             <div className="bg-card rounded-2xl shadow-subtle border border-border p-5 sm:p-6 space-y-5">
               <div className="flex gap-4 items-start border-b border-slate-100 pb-5">
-                <div className="w-10 h-10 bg-blue-50 text-primary rounded-lg flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 bg-primary-light text-primary rounded-lg flex items-center justify-center shrink-0">
                   <Megaphone size={20} />
                 </div>
                 <div>
@@ -146,13 +148,13 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="flex gap-4 items-start">
-                <div className="w-10 h-10 bg-amber-50 text-warning rounded-lg flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 bg-accent/20 text-[#141414] rounded-lg flex items-center justify-center shrink-0">
                   <Award size={20} />
                 </div>
                 <div>
                   <h4 className="font-bold text-foreground mb-1 text-sm sm:text-base">Sertifikat Digital Kini Terintegrasi MyASN</h4>
                   <p className="text-xs sm:text-sm text-muted mb-2 leading-relaxed">Sertifikat yang Anda peroleh dari LMS ini sekarang secara otomatis tersinkronisasi dengan portal kepegawaian MyASN BKN.</p>
-                  <span className="text-[10px] font-semibold text-warning bg-amber-50 px-2 py-1 rounded border border-amber-200">1 Hari yang lalu</span>
+                  <span className="text-[10px] font-semibold text-[#141414] bg-accent/20 px-2 py-1 rounded border border-accent/30">1 Hari yang lalu</span>
                 </div>
               </div>
             </div>
@@ -199,7 +201,7 @@ export default function Dashboard() {
                 <button 
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`flex-1 sm:flex-none px-4 sm:px-5 py-2 text-xs sm:text-sm font-bold rounded-md capitalize transition-all whitespace-nowrap ${activeTab === tab ? 'bg-white text-primary shadow-sm ring-1 ring-black/5' : 'text-muted hover:text-foreground hover:bg-white/50'}`}
+                  className={`flex-1 sm:flex-none px-4 sm:px-5 py-2 text-xs sm:text-sm font-bold rounded-md capitalize transition-all whitespace-nowrap ${activeTab === tab ? 'bg-primary text-primary-foreground shadow-sm ring-1 ring-black/5' : 'text-muted hover:text-foreground hover:bg-white/50'}`}
                 >
                   {tab}
                 </button>
@@ -241,7 +243,7 @@ export default function Dashboard() {
                         <div className="w-full h-1.5 bg-slate-100 rounded-full mb-4 overflow-hidden shadow-inner">
                           <div className="h-full bg-primary rounded-full transition-all duration-1000 ease-out" style={{ width: `${course.progress}%` }}></div>
                         </div>
-                        <Link href={`/course/${course.id}`} className="w-full py-2 sm:py-2.5 bg-primary-light text-primary font-bold rounded-lg text-xs sm:text-sm hover:bg-blue-100 transition-colors flex justify-center items-center gap-2">
+                        <Link href={`/course/${course.id}`} className="w-full py-2 sm:py-2.5 bg-primary-light text-primary font-bold rounded-lg text-xs sm:text-sm hover:bg-primary/20 transition-colors flex justify-center items-center gap-2">
                           <PlayCircle size={16} /> Lanjutkan Materi
                         </Link>
                       </div>

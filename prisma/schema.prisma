@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Skpd {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  users     User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id           String        @id @default(cuid())
+  nip          String        @unique
+  name         String
+  passwordHash String
+  role         Role          @default(PEGAWAI)
+  skpdId       String
+  skpd         Skpd          @relation(fields: [skpdId], references: [id])
+  totalJp      Int           @default(0)
+  targetJp     Int           @default(20)
+  status       UserStatus    @default(AKTIF)
+  progress     Progress[]
+  certificates Certificate[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  lastLogin    DateTime?
+}
+
+enum Role {
+  PEGAWAI
+  INSTRUKTUR
+  ADMIN_SKPD
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  AKTIF
+  CUTI
+  PENSIUN
+  NONAKTIF
+}
+
+model Course {
+  id           String        @id @default(cuid())
+  title        String
+  category     String
+  description  String?
+  videoUrl     String?
+  jpCredit     Int           @default(2)
+  status       CourseStatus  @default(DRAFT)
+  progress     Progress[]
+  certificates Certificate[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Progress {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id])
+  status    ProgressStatus @default(BELUM_MULAI)
+  score     Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, courseId])
+}
+
+enum ProgressStatus {
+  BELUM_MULAI
+  SEDANG_BELAJAR
+  SELESAI
+}
+
+model Certificate {
+  id         String   @id @default(cuid())
+  certNumber String   @unique
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  courseId   String
+  course     Course   @relation(fields: [courseId], references: [id])
+  issueDate  DateTime @default(now())
+  status     CertStatus @default(MENUNGGU)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+enum CertStatus {
+  MENUNGGU
+  DISETUJUI
+  DITOLAK
+}
