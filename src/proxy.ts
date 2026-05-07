@@ -6,12 +6,14 @@ export async function proxy(request: NextRequest) {
   const token = request.cookies.get('auth-token')?.value;
   const { pathname } = request.nextUrl;
 
-  // Lindungi halaman /admin
-  if (pathname.startsWith('/admin')) {
+  // Lindungi halaman utama (/) dan /admin
+  if (pathname === '/' || pathname.startsWith('/admin')) {
     if (!token) {
       // Belum login, arahkan ke halaman login
       const url = new URL('/login', request.url);
-      url.searchParams.set('callbackUrl', pathname);
+      if (pathname !== '/') {
+        url.searchParams.set('callbackUrl', pathname);
+      }
       return NextResponse.redirect(url);
     }
 
@@ -24,8 +26,8 @@ export async function proxy(request: NextRequest) {
       return response;
     }
 
-    // Cek Role (Hanya ADMIN_SKPD atau SUPER_ADMIN)
-    if (payload.role !== 'ADMIN_SKPD' && payload.role !== 'SUPER_ADMIN') {
+    // Jika di halaman admin, cek Role (Hanya ADMIN_SKPD atau SUPER_ADMIN)
+    if (pathname.startsWith('/admin') && payload.role !== 'ADMIN_SKPD' && payload.role !== 'SUPER_ADMIN') {
       // User login tapi bukan admin, arahkan ke dashboard reguler
       return NextResponse.redirect(new URL('/', request.url));
     }
@@ -48,5 +50,5 @@ export async function proxy(request: NextRequest) {
 
 // Hanya jalankan middleware ini pada path berikut:
 export const config = {
-  matcher: ['/admin/:path*', '/login'],
+  matcher: ['/', '/admin/:path*', '/login'],
 };
