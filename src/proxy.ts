@@ -3,6 +3,7 @@ import type { NextRequest } from 'next/server';
 import { verifyJwt } from './lib/auth';
 
 export async function proxy(request: NextRequest) {
+  const start = Date.now();
   const token = request.cookies.get('auth-token')?.value;
   const { pathname } = request.nextUrl;
 
@@ -45,6 +46,7 @@ export async function proxy(request: NextRequest) {
     }
   }
 
+  console.log(`[Proxy] ${pathname} processed in ${Date.now() - start}ms`);
   return NextResponse.next();
 }
 
