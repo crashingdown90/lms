@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { PlayCircle, BookOpen, CheckCircle, Award, ChevronRight, Play, User, Calendar, Megaphone, Clock } from "lucide-react";
 import Header from "@/components/Header";
@@ -8,36 +8,22 @@ import Footer from "@/components/Footer";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("semua");
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  const courses = [
-    {
-      id: 1,
-      title: "Tata Kelola Pemerintahan yang Baik (Good Corporate Governance)",
-      instructor: "Dr. Budi Santoso, M.Si",
-      duration: "4 Jam 30 Menit",
-      progress: 75,
-      status: "ongoing",
-      image: "/images/Asset_kota/Asset 2.png"
-    },
-    {
-      id: 2,
-      title: "Etika Pelayanan Publik Berbasis Digital",
-      instructor: "Dra. Siti Aminah",
-      duration: "2 Jam 15 Menit",
-      progress: 0,
-      status: "not_started",
-      image: "/images/Asset_kota/Asset 3.png"
-    },
-    {
-      id: 3,
-      title: "Manajemen Kinerja ASN 2026",
-      instructor: "Andi Saputra, S.E.",
-      duration: "3 Jam",
-      progress: 100,
-      status: "completed",
-      image: "/images/Asset_kota/Asset 4.png"
-    }
-  ];
+  useEffect(() => {
+    fetch("/api/user/dashboard")
+      .then(res => res.json())
+      .then(data => {
+        setData(data);
+        setLoading(false);
+      });
+  }, []);
+
+  const courses = data?.courses || [];
+  const user = data?.user || { name: "ASN", activeCourses: 0, completedCourses: 0, certificates: 0 };
+  
+  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
 
   return (
     <div className="min-h-screen bg-transparent flex flex-col">
@@ -51,7 +37,7 @@ export default function Dashboard() {
           </div>
           <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary/40 z-0"></div>
           <div className="relative z-10">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3">Selamat Pagi, Drefan! 👋</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3">Selamat Pagi, {user.name}! 👋</h2>
             <p className="text-primary-light max-w-2xl text-base sm:text-lg opacity-90">Mari tingkatkan kompetensi Anda hari ini. Anda memiliki 1 materi yang belum diselesaikan.</p>
           </div>
         </section>
@@ -63,7 +49,7 @@ export default function Dashboard() {
               <BookOpen size={24} />
             </div>
             <div className="min-w-0">
-              <p className="text-2xl sm:text-3xl font-bold text-foreground leading-none mb-1">2</p>
+              <p className="text-2xl sm:text-3xl font-bold text-foreground leading-none mb-1">{user.activeCourses}</p>
               <p className="text-xs sm:text-sm text-muted font-medium truncate">Pelatihan Aktif</p>
             </div>
           </div>
@@ -72,7 +58,7 @@ export default function Dashboard() {
               <CheckCircle size={24} />
             </div>
             <div className="min-w-0">
-              <p className="text-2xl sm:text-3xl font-bold text-foreground leading-none mb-1">5</p>
+              <p className="text-2xl sm:text-3xl font-bold text-foreground leading-none mb-1">{user.completedCourses}</p>
               <p className="text-xs sm:text-sm text-muted font-medium truncate">Pelatihan Selesai</p>
             </div>
           </div>
@@ -81,52 +67,54 @@ export default function Dashboard() {
               <Award size={24} />
             </div>
             <div className="min-w-0">
-              <p className="text-2xl sm:text-3xl font-bold text-foreground leading-none mb-1">3</p>
+              <p className="text-2xl sm:text-3xl font-bold text-foreground leading-none mb-1">{user.certificates}</p>
               <p className="text-xs sm:text-sm text-muted font-medium truncate">Sertifikat Diraih</p>
             </div>
           </div>
         </section>
 
         {/* Resume Course */}
-        <section className="mb-10 sm:mb-12">
-          <h3 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-6 flex items-center gap-2">
-            Lanjutkan Belajar <ChevronRight size={20} className="text-muted" />
-          </h3>
-          <div className="bg-card rounded-2xl shadow-subtle border border-border overflow-hidden flex flex-col md:flex-row hover:shadow-md transition-shadow">
-            <div className="md:w-[40%] lg:w-1/3 h-48 sm:h-56 md:h-auto bg-slate-200 relative shrink-0">
-              <img 
-                src={courses[0].image} 
-                alt="Course Thumbnail" 
-                className="w-full h-full object-cover"
-              />
-              <Link href="/course/1" className="absolute inset-0 bg-black/30 flex items-center justify-center group cursor-pointer transition-all hover:bg-black/40 backdrop-blur-[1px]">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-primary flex items-center justify-center text-white transform transition-transform group-hover:scale-110 shadow-xl border border-white/20">
-                  <Play size={24} className="ml-1 sm:ml-2 sm:w-7 sm:h-7" />
-                </div>
-              </Link>
-            </div>
-            <div className="p-5 sm:p-8 flex flex-col justify-center flex-1">
-              <div className="flex flex-wrap items-center gap-2 mb-3 sm:mb-4">
-                <span className="px-3 py-1 bg-primary-light text-primary text-[10px] sm:text-xs font-bold rounded-full uppercase tracking-wider">Berlangsung</span>
-                <span className="text-[11px] sm:text-xs text-muted flex items-center gap-1 font-medium"><PlayCircle size={14} /> Tersisa 1 Jam 15 Menit</span>
+        {courses.length > 0 && (
+          <section className="mb-10 sm:mb-12">
+            <h3 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-6 flex items-center gap-2">
+              Lanjutkan Belajar <ChevronRight size={20} className="text-muted" />
+            </h3>
+            <div className="bg-card rounded-2xl shadow-subtle border border-border overflow-hidden flex flex-col md:flex-row hover:shadow-md transition-shadow">
+              <div className="md:w-[40%] lg:w-1/3 h-48 sm:h-56 md:h-auto bg-slate-200 relative shrink-0">
+                <img 
+                  src={courses[0].image} 
+                  alt="Course Thumbnail" 
+                  className="w-full h-full object-cover"
+                />
+                <Link href={`/course/${courses[0].id}`} className="absolute inset-0 bg-black/30 flex items-center justify-center group cursor-pointer transition-all hover:bg-black/40 backdrop-blur-[1px]">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-primary flex items-center justify-center text-white transform transition-transform group-hover:scale-110 shadow-xl border border-white/20">
+                    <Play size={24} className="ml-1 sm:ml-2 sm:w-7 sm:h-7" />
+                  </div>
+                </Link>
               </div>
-              <h4 className="text-xl sm:text-2xl font-bold text-foreground mb-2 leading-snug truncate sm:whitespace-normal">{courses[0].title}</h4>
-              <p className="text-sm sm:text-base text-muted mb-6 sm:mb-8 flex items-center gap-2">
-                <User size={16} /> {courses[0].instructor}
-              </p>
-              
-              <div className="mt-auto">
-                <div className="mb-2 flex justify-between items-end">
-                  <span className="text-xs sm:text-sm font-semibold text-foreground">Progres Belajar</span>
-                  <span className="text-sm sm:text-base font-bold text-primary">{courses[0].progress}%</span>
+              <div className="p-5 sm:p-8 flex flex-col justify-center flex-1">
+                <div className="flex flex-wrap items-center gap-2 mb-3 sm:mb-4">
+                  <span className="px-3 py-1 bg-primary-light text-primary text-[10px] sm:text-xs font-bold rounded-full uppercase tracking-wider">Berlangsung</span>
+                  <span className="text-[11px] sm:text-xs text-muted flex items-center gap-1 font-medium"><PlayCircle size={14} /> Lanjutkan Materi</span>
                 </div>
-                <div className="w-full h-2 sm:h-2.5 bg-slate-100 rounded-full overflow-hidden shadow-inner">
-                  <div className="h-full bg-primary rounded-full transition-all duration-1000 ease-out" style={{ width: `${courses[0].progress}%` }}></div>
+                <h4 className="text-xl sm:text-2xl font-bold text-foreground mb-2 leading-snug truncate sm:whitespace-normal">{courses[0].title}</h4>
+                <p className="text-sm sm:text-base text-muted mb-6 sm:mb-8 flex items-center gap-2">
+                  <User size={16} /> {courses[0].instructor}
+                </p>
+                
+                <div className="mt-auto">
+                  <div className="mb-2 flex justify-between items-end">
+                    <span className="text-xs sm:text-sm font-semibold text-foreground">Progres Belajar</span>
+                    <span className="text-sm sm:text-base font-bold text-primary">{courses[0].progress}%</span>
+                  </div>
+                  <div className="w-full h-2 sm:h-2.5 bg-slate-100 rounded-full overflow-hidden shadow-inner">
+                    <div className="h-full bg-primary rounded-full transition-all duration-1000 ease-out" style={{ width: `${courses[0].progress}%` }}></div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* --- NEW COMPREHENSIVE SECTIONS --- */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10 sm:mb-12">
@@ -210,7 +198,7 @@ export default function Dashboard() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-            {courses.map(course => (
+            {courses.map((course: any) => (
               <div key={course.id} className="bg-card rounded-xl border border-border overflow-hidden shadow-sm hover:shadow-subtle transition-all duration-300 group flex flex-col hover:-translate-y-1">
                 <div className="h-40 sm:h-48 relative overflow-hidden">
                   <img src={course.image} alt={course.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />

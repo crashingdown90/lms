@@ -2,42 +2,21 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Search, Filter, PlayCircle, BookOpen, User } from "lucide-react";
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 
-export default function KatalogPage() {
-  const courses = [
-    {
-      id: 1,
-      title: "Tata Kelola Pemerintahan yang Baik (Good Corporate Governance)",
-      instructor: "Dr. Budi Santoso, M.Si",
-      duration: "4 Jam 30 Menit",
-      image: "/images/Asset_kota/Asset 2.png",
-      category: "Kepemimpinan",
-    },
-    {
-      id: 2,
-      title: "Etika Pelayanan Publik Berbasis Digital",
-      instructor: "Dra. Siti Aminah",
-      duration: "2 Jam 15 Menit",
-      image: "/images/Asset_kota/Asset 3.png",
-      category: "Pelayanan Publik",
-    },
-    {
-      id: 4,
-      title: "Pencegahan Korupsi di Instansi Pemerintah",
-      instructor: "KPK RI & Inspektorat Daerah",
-      duration: "3 Jam 45 Menit",
-      image: "/images/Asset_kota/Asset 5.png",
-      category: "Integritas",
-    },
-    {
-      id: 5,
-      title: "Literasi Keamanan Digital Bagi ASN",
-      instructor: "BSSN & Diskominfo",
-      duration: "2 Jam",
-      image: "/images/Asset_kota/Asset 6.png",
-      category: "Teknologi",
-    }
-  ];
+export default async function KatalogPage() {
+  const dbCourses = await prisma.course.findMany({
+    where: { status: "PUBLISHED" }
+  });
+
+  const courses = dbCourses.map(c => ({
+    id: c.id,
+    title: c.title,
+    instructor: "Admin BKPSDM",
+    duration: `${c.jpCredit} JP`,
+    image: c.category === "Pelayanan Publik" ? "/images/Asset_kota/Asset 2.png" : "/images/Asset_kota/Asset 3.png",
+    category: c.category
+  }));
 
   return (
     <div className="min-h-screen bg-transparent flex flex-col">

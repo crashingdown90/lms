@@ -9,7 +9,10 @@ import Link from "next/link";
 
 export default function CoursePage() {
   const params = useParams();
-  
+  const [dbCourse, setDbCourse] = useState<any>(null);
+  const [dbUser, setDbUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
   // Video states
   const videoRef = useRef<HTMLVideoElement>(null);
   const playerContainerRef = useRef<HTMLDivElement>(null);
@@ -63,6 +66,39 @@ export default function CoursePage() {
       correct: 0
     }
   ];
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [courseRes, userRes] = await Promise.all([
+          fetch(`/api/courses/${params.id}`),
+          fetch(`/api/user/dashboard`)
+        ]);
+        
+        const courseData = await courseRes.json();
+        const userData = await userRes.json();
+        
+        if (courseData.course) {
+          setDbCourse(courseData.course);
+          if (courseData.progress?.status === "SELESAI") {
+            setVideoCompleted(true);
+            setQuizCompleted(true);
+            setQuizScore(courseData.progress.score || 100);
+            setProgress(100);
+            setMaxTimeWatched(9999);
+          }
+        }
+        if (userData.user) {
+          setDbUser(userData.user);
+        }
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, [params.id]);
 
   // Handle Video Play/Pause
   const togglePlay = () => {
@@ -166,6 +202,14 @@ export default function CoursePage() {
       const finalScore = Math.round((correctCount / quizQuestions.length) * 100);
       setQuizScore(finalScore);
       setQuizCompleted(true);
+      
+      if (finalScore >= 70) {
+        fetch(`/api/courses/${params.id}/progress`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "SELESAI", score: finalScore })
+        });
+      }
     }
   };
 
@@ -179,7 +223,11 @@ export default function CoursePage() {
   return (
     <div className="min-h-screen bg-transparent flex flex-col">
       <Header />
-
+      {loading ? (
+        <div className="flex-1 flex items-center justify-center">
+          <Loader2 className="animate-spin text-primary w-12 h-12" />
+        </div>
+      ) : (
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         <Link href="/katalog" className="inline-flex items-center gap-1 text-sm text-muted hover:text-primary mb-6 transition-colors">
           <ChevronLeft size={16} /> Kembali ke Katalog
@@ -207,7 +255,7 @@ export default function CoursePage() {
               <video 
                 ref={videoRef}
                 className="w-full h-full object-contain bg-black"
-                src="https://www.w3schools.com/html/mov_bbb.mp4"
+                src={dbCourse?.videoUrl || "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4"}
                 poster="/images/Asset_kota/Asset 11.png"
                 onTimeUpdate={handleTimeUpdate}
                 onLoadedMetadata={(e) => {
@@ -290,9 +338,9 @@ export default function CoursePage() {
                 <span className="px-3 py-1 bg-primary-light text-primary text-xs font-bold rounded-full uppercase tracking-wider">Modul 1</span>
                 {videoCompleted && <span className="px-3 py-1 bg-green-100 text-success text-xs font-bold rounded-full uppercase tracking-wider flex items-center gap-1"><CheckCircle size={14}/> Video Selesai</span>}
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">Pengantar Tata Kelola Pemerintahan Berbasis Digital</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">{dbCourse?.title}</h1>
               <p className="text-muted leading-relaxed text-sm sm:text-base">
-                Materi ini adalah simulasi dummy yang interaktif. Anda dapat mencoba memutar, menjeda, dan mencari (seek). Cobalah menekan garis waktu ke depan untuk menguji Anti-Skip. Setelah video ini selesai, Anda harus mengerjakan Kuis Akhir Modul sebelum dapat mengklaim sertifikat.
+                {dbCourse?.description || "Materi pelatihan interaktif. Tonton video ini sampai selesai untuk membuka kuis ujian."}
               </p>
             </div>
           </div>
@@ -358,6 +406,7 @@ export default function CoursePage() {
           </div>
         </div>
       </main>
+      )}
       
       <Footer />
 
@@ -482,11 +531,11 @@ export default function CoursePage() {
                   <Award size={20} className="text-amber-500" />
                 </div>
                 <h3 className="text-[10px] font-bold text-muted uppercase tracking-widest mb-4">Sertifikat Kompetensi Nasional</h3>
-                <h4 className="text-2xl font-black text-foreground mb-1 uppercase tracking-wide">Drefan Sukabumi</h4>
-                <p className="text-sm text-muted mb-6">NIP. 198501012010011012</p>
+                <h4 className="text-2xl font-black text-foreground mb-1 uppercase tracking-wide">{dbUser?.name || "Pegawai ASN"}</h4>
+                <p className="text-sm text-muted mb-6">NIP. {dbUser?.nip || "198501012010011012"}</p>
                 <div className="w-16 h-1 bg-primary mx-auto mb-6 rounded-full"></div>
                 <p className="text-xs font-medium text-foreground mb-1">Diberikan atas kelulusan pada materi:</p>
-                <p className="text-base font-bold text-primary leading-tight mb-2">Pengantar Tata Kelola Pemerintahan Berbasis Digital</p>
+                <p className="text-base font-bold text-primary leading-tight mb-2">{dbCourse?.title}</p>
                 <p className="text-xs font-bold text-success bg-green-50 px-2 py-1 rounded inline-block">Skor Akhir: {quizScore}/100</p>
               </div>
               

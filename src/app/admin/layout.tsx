@@ -135,7 +135,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         <div className="p-4 border-t border-white/10 bg-black/20">
-          <Link href="/" className="flex items-center justify-center gap-2 px-3 py-3 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 border border-red-500/20 rounded-lg font-bold transition-colors w-full text-sm">
+          <Link href="/api/auth/logout" className="flex items-center justify-center gap-2 px-3 py-3 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 border border-red-500/20 rounded-lg font-bold transition-colors w-full text-sm">
             <LogOut size={16} /> Keluar Ke Portal
           </Link>
         </div>

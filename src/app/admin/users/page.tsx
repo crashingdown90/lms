@@ -1,90 +1,32 @@
 "use client";
 
-import { useState } from "react";
-import { Search, Plus, Edit, Trash2, Filter, Download, MoreVertical, Users, CheckCircle, Clock, ShieldCheck, Mail, X, AlertCircle } from "lucide-react";
-
-const initialUsersData = [
-  { 
-    id: 1,
-    nip: "19850101 201001 1 012", 
-    name: "Drefan Sukabumi", 
-    role: "Pranata Komputer Ahli Muda", 
-    skpd: "Dinas Komunikasi & Informatika", 
-    jp: 45, 
-    target: 20, 
-    status: "Aktif", 
-    lastLogin: "2 jam yang lalu", 
-    color: "from-primary to-accent",
-    initials: "DS",
-    systemRole: "Superadmin"
-  },
-  { 
-    id: 2,
-    nip: "19880512 201502 2 001", 
-    name: "Siti Rahmawati, S.E.", 
-    role: "Analis Keuangan Pusat", 
-    skpd: "Dinas Pendidikan", 
-    jp: 14, 
-    target: 20, 
-    status: "Aktif", 
-    lastLogin: "1 hari yang lalu", 
-    color: "from-primary to-primary-hover",
-    initials: "SR",
-    systemRole: "Admin SKPD"
-  },
-  { 
-    id: 3,
-    nip: "19750211 199903 1 002", 
-    name: "Dr. Rina Puspita", 
-    role: "Dokter Ahli Madya", 
-    skpd: "Dinas Kesehatan", 
-    jp: 32, 
-    target: 20, 
-    status: "Cuti", 
-    lastLogin: "3 minggu yang lalu", 
-    color: "from-[#141414] to-slate-800",
-    initials: "RP",
-    systemRole: "ASN"
-  },
-  { 
-    id: 4,
-    nip: "19920405 202012 1 004", 
-    name: "Ahmad Fauzan, S.STP", 
-    role: "Lurah Cikole", 
-    skpd: "Kecamatan Cikole", 
-    jp: 8, 
-    target: 20, 
-    status: "Aktif", 
-    lastLogin: "Baru saja", 
-    color: "from-accent to-yellow-500",
-    initials: "AF",
-    systemRole: "ASN"
-  },
-  { 
-    id: 5,
-    nip: "19801122 200501 1 003", 
-    name: "Drs. Bambang Pamungkas", 
-    role: "Penyuluh Pertanian Madya", 
-    skpd: "Dinas Pertanian", 
-    jp: 20, 
-    target: 20, 
-    status: "Pensiun", 
-    lastLogin: "2 bulan yang lalu", 
-    color: "from-slate-500 to-slate-700",
-    initials: "BP",
-    systemRole: "ASN"
-  },
-];
+import { useState, useEffect } from "react";
+import { Search, Plus, Edit, Trash2, Filter, Download, MoreVertical, Users, CheckCircle, Clock, ShieldCheck, Mail, X, AlertCircle, Loader2 } from "lucide-react";
 
 export default function AdminUsers() {
-  const [usersList, setUsersList] = useState(initialUsersData);
+  const [usersList, setUsersList] = useState<any[]>([]);
+  const [skpdList, setSkpdList] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [newUserData, setNewUserData] = useState({ 
+    name: "", nip: "", skpdId: "",
+    jenisJabatan: "", golongan: "", tingkatPendidikan: "", programStudi: "", eselon: "", jenisKelamin: ""
+  });
+  
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   
   // Modal States
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [editUserData, setEditUserData] = useState({ 
+    name: "", nip: "", skpdId: "",
+    jenisJabatan: "", golongan: "", tingkatPendidikan: "", programStudi: "", eselon: "", jenisKelamin: ""
+  });
 
   // Derived State
   const filteredUsers = usersList.filter(user => 
@@ -92,22 +34,133 @@ export default function AdminUsers() {
     user.nip.includes(searchTerm)
   );
 
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  const paginatedUsers = filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   const openRoleModal = (user: any) => {
     setSelectedUser({ ...user });
     setIsRoleModalOpen(true);
   };
 
-  const saveRole = () => {
-    setUsersList(usersList.map(u => u.id === selectedUser.id ? selectedUser : u));
+  const openEditModal = (user: any) => {
+    setSelectedUser(user);
+    // Find the skpdId for this user by matching skpd name with skpdList
+    const skpdObj = skpdList.find(s => s.name === user.skpd);
+    setEditUserData({ 
+      name: user.name, 
+      nip: user.nip, 
+      skpdId: skpdObj ? skpdObj.id : "",
+      jenisJabatan: user.jenisJabatan || "",
+      golongan: user.golongan || "",
+      tingkatPendidikan: user.tingkatPendidikan || "",
+      programStudi: user.programStudi || "",
+      eselon: user.eselon || "",
+      jenisKelamin: user.jenisKelamin || ""
+    });
+    setIsEditModalOpen(true);
+  };
+
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/admin/users").then(res => res.json()),
+      fetch("/api/admin/skpd").then(res => res.json())
+    ]).then(([users, skpds]) => {
+      if (Array.isArray(users)) setUsersList(users);
+      if (Array.isArray(skpds)) setSkpdList(skpds);
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, []);
+
+  const saveRole = async () => {
+    try {
+      const res = await fetch(`/api/admin/users/${selectedUser.id}/role`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newRole: selectedUser.systemRole })
+      });
+      if (res.ok) {
+        setUsersList(usersList.map(u => u.id === selectedUser.id ? selectedUser : u));
+      } else {
+        alert("Gagal menyimpan. Fitur ini membutuhkan hak akses SUPER_ADMIN.");
+      }
+    } catch (e) {
+      alert("Terjadi kesalahan server.");
+    }
     setIsRoleModalOpen(false);
     setSelectedUser(null);
   };
 
-  const deleteUser = () => {
-    setUsersList(usersList.filter(u => u.id !== selectedUser.id));
+  const deleteUser = async () => {
+    try {
+      const res = await fetch(`/api/admin/users/${selectedUser.id}`, { method: "DELETE" });
+      if (res.ok) {
+        setUsersList(usersList.filter(u => u.id !== selectedUser.id));
+      } else {
+        alert("Gagal menghapus data. Hanya SUPER_ADMIN yang diizinkan.");
+      }
+    } catch (e) {
+      alert("Terjadi kesalahan server.");
+    }
     setIsDeleteModalOpen(false);
     setSelectedUser(null);
   };
+
+  const createUser = async () => {
+    if (!newUserData.name || !newUserData.nip || !newUserData.skpdId) {
+      return alert("Mohon lengkapi semua data!");
+    }
+    
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newUserData)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert("Pegawai berhasil ditambahkan! Password default: pegawai");
+        setIsAddModalOpen(false);
+        setNewUserData({ 
+          name: "", nip: "", skpdId: "", 
+          jenisJabatan: "", golongan: "", tingkatPendidikan: "", programStudi: "", eselon: "", jenisKelamin: "" 
+        });
+        // Refresh page to fetch latest data
+        window.location.reload();
+      } else {
+        alert(data.error || "Gagal menambahkan pegawai.");
+      }
+    } catch (e) {
+      alert("Terjadi kesalahan server.");
+    }
+  };
+
+  const editUser = async () => {
+    if (!editUserData.name || !editUserData.nip || !editUserData.skpdId) {
+      return alert("Mohon lengkapi semua data!");
+    }
+    try {
+      const res = await fetch(`/api/admin/users/${selectedUser.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editUserData)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setIsEditModalOpen(false);
+        window.location.reload();
+      } else {
+        alert(data.error || "Gagal mengedit pegawai.");
+      }
+    } catch (e) {
+      alert("Terjadi kesalahan server.");
+    }
+  };
+
+  if (loading) return (
+    <div className="h-[60vh] flex items-center justify-center">
+      <Loader2 className="animate-spin text-primary w-12 h-12" />
+    </div>
+  );
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
@@ -138,7 +191,7 @@ export default function AdminUsers() {
           </div>
           <div>
             <p className="text-xs font-bold text-muted uppercase tracking-wider mb-0.5">Total ASN Aktif</p>
-            <h3 className="text-2xl font-black text-foreground">3,240</h3>
+            <h3 className="text-2xl font-black text-foreground">{usersList.length}</h3>
           </div>
         </div>
         <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4 group hover:border-accent/30 transition-colors">
@@ -165,7 +218,7 @@ export default function AdminUsers() {
           </div>
           <div>
             <p className="text-xs font-bold text-muted uppercase tracking-wider mb-0.5">Admin SKPD</p>
-            <h3 className="text-2xl font-black text-foreground">42</h3>
+            <h3 className="text-2xl font-black text-foreground">{usersList.filter(u => u.systemRole === "ADMIN_SKPD").length}</h3>
           </div>
         </div>
       </div>
@@ -192,10 +245,13 @@ export default function AdminUsers() {
           
           <div className="flex items-center gap-2 text-sm font-bold text-slate-500 w-full sm:w-auto justify-end">
             <span>Tampilkan:</span>
-            <select className="border border-slate-200 bg-white rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary font-bold text-foreground">
-              <option>5 baris</option>
-              <option>10 baris</option>
-              <option>50 baris</option>
+            <select 
+              value={itemsPerPage} 
+              onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+              className="border border-slate-200 bg-white rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary font-bold text-foreground">
+              <option value={5}>5 baris</option>
+              <option value={10}>10 baris</option>
+              <option value={50}>50 baris</option>
             </select>
           </div>
         </div>
@@ -214,14 +270,14 @@ export default function AdminUsers() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-sm">
-              {filteredUsers.length === 0 ? (
+              {paginatedUsers.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-slate-500 font-medium">
                     Tidak ada data pegawai yang cocok dengan pencarian "{searchTerm}"
                   </td>
                 </tr>
               ) : (
-                filteredUsers.map((user, i) => (
+                paginatedUsers.map((user, i) => (
                   <tr key={user.id} className="hover:bg-primary-light/30 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -254,18 +310,18 @@ export default function AdminUsers() {
                     </td>
                     <td className="px-6 py-4 text-center">
                       <span className={`inline-flex items-center justify-center px-2.5 py-1 text-[10px] font-bold rounded-full uppercase tracking-wider
-                        ${user.systemRole === 'Superadmin' ? 'bg-primary text-primary-foreground border border-primary' : 
-                          user.systemRole === 'Admin SKPD' ? 'bg-accent/20 text-[#141414] border border-accent/50' : 
+                        ${user.systemRole === 'SUPER_ADMIN' ? 'bg-primary text-primary-foreground border border-primary' : 
+                          user.systemRole === 'ADMIN_SKPD' ? 'bg-accent/20 text-[#141414] border border-accent/50' : 
                           'bg-slate-100 text-slate-500 border border-slate-200'}
                       `}>
-                        {user.systemRole}
+                        {user.systemRole === 'PEGAWAI' ? 'ASN' : user.systemRole.replace('_', ' ')}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-xs text-slate-500 font-medium">{user.lastLogin}</div>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center justify-end gap-1 transition-opacity">
                         <button 
                           onClick={() => openRoleModal(user)}
                           className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary-light rounded-lg transition-colors" 
@@ -273,7 +329,13 @@ export default function AdminUsers() {
                         >
                           <ShieldCheck size={16} />
                         </button>
-                        <button className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit Data"><Edit size={16} /></button>
+                        <button 
+                          onClick={() => openEditModal(user)}
+                          className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" 
+                          title="Edit Data"
+                        >
+                          <Edit size={16} />
+                        </button>
                         <button 
                           onClick={() => { setSelectedUser(user); setIsDeleteModalOpen(true); }}
                           className="p-1.5 text-slate-400 hover:text-error hover:bg-red-50 rounded-lg transition-colors" 
@@ -282,7 +344,6 @@ export default function AdminUsers() {
                           <Trash2 size={16} />
                         </button>
                       </div>
-                      <button className="p-1.5 text-slate-400 group-hover:hidden"><MoreVertical size={16} /></button>
                     </td>
                   </tr>
                 ))
@@ -294,15 +355,18 @@ export default function AdminUsers() {
         {/* Pagination Footer */}
         <div className="p-4 border-t border-slate-100 flex items-center justify-between text-sm">
           <div className="text-slate-500 font-medium">
-            Menampilkan <span className="font-bold text-foreground">1</span> hingga <span className="font-bold text-foreground">{filteredUsers.length}</span> dari <span className="font-bold text-foreground">{usersList.length}</span> ASN
+            Menampilkan <span className="font-bold text-foreground">{filteredUsers.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1}</span> hingga <span className="font-bold text-foreground">{Math.min(currentPage * itemsPerPage, filteredUsers.length)}</span> dari <span className="font-bold text-foreground">{filteredUsers.length}</span> ASN
           </div>
           <div className="flex gap-1">
-            <button className="px-3 py-1 border border-slate-200 rounded-md text-slate-400 cursor-not-allowed font-medium">Sebelumnya</button>
-            <button className="px-3 py-1 bg-primary text-primary-foreground rounded-md font-bold shadow-sm">1</button>
-            <button className="px-3 py-1 border border-slate-200 rounded-md hover:bg-slate-50 font-medium text-slate-600">2</button>
-            <button className="px-3 py-1 border border-slate-200 rounded-md hover:bg-slate-50 font-medium text-slate-600">3</button>
-            <span className="px-2 py-1 text-slate-400">...</span>
-            <button className="px-3 py-1 border border-slate-200 rounded-md hover:bg-slate-50 font-medium text-slate-600">Selanjutnya</button>
+            <button 
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1 border border-slate-200 rounded-md text-slate-600 hover:bg-slate-50 disabled:text-slate-400 disabled:hover:bg-transparent font-medium disabled:cursor-not-allowed">Sebelumnya</button>
+            <span className="px-3 py-1 bg-primary text-primary-foreground rounded-md font-bold shadow-sm">{currentPage}</span>
+            <button 
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages || totalPages === 0}
+              className="px-3 py-1 border border-slate-200 rounded-md text-slate-600 hover:bg-slate-50 disabled:text-slate-400 disabled:hover:bg-transparent font-medium disabled:cursor-not-allowed">Selanjutnya</button>
           </div>
         </div>
       </div>
@@ -333,13 +397,13 @@ export default function AdminUsers() {
                   onChange={(e) => setSelectedUser({...selectedUser, systemRole: e.target.value})}
                   className="w-full px-4 py-3 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none"
                 >
-                  <option value="ASN">ASN (Pengguna Reguler)</option>
-                  <option value="Admin SKPD">Admin SKPD (Manajemen Instansi)</option>
-                  <option value="Superadmin">Superadmin (Akses Penuh)</option>
+                  <option value="PEGAWAI">ASN (Pengguna Reguler)</option>
+                  <option value="ADMIN_SKPD">Admin SKPD (Manajemen Instansi)</option>
+                  <option value="SUPER_ADMIN">Superadmin (Akses Penuh)</option>
                 </select>
               </div>
               
-              {selectedUser.systemRole === "Superadmin" && (
+              {selectedUser.systemRole === "SUPER_ADMIN" && (
                 <div className="p-3 bg-warning/10 border border-warning/20 rounded-lg flex gap-3 text-amber-700">
                   <AlertCircle size={18} className="shrink-0 mt-0.5" />
                   <p className="text-xs font-medium">Perhatian: Memberikan akses Superadmin berarti memberikan kendali penuh terhadap seluruh sistem aplikasi.</p>
@@ -383,28 +447,163 @@ export default function AdminUsers() {
                 <X size={20} />
               </button>
             </div>
-            <div className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
+            <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="col-span-1 md:col-span-2">
                   <label className="block text-sm font-bold text-foreground mb-1">Nama Lengkap</label>
-                  <input type="text" placeholder="Masukkan nama..." className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none" />
+                  <input type="text" placeholder="Masukkan nama..." 
+                    value={newUserData.name} onChange={(e) => setNewUserData({...newUserData, name: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none" />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-foreground mb-1">NIP</label>
-                  <input type="text" placeholder="18 digit NIP" className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none" />
+                  <input type="text" placeholder="18 digit NIP" 
+                    value={newUserData.nip} onChange={(e) => setNewUserData({...newUserData, nip: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none" />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-foreground mb-1">Instansi / SKPD</label>
-                  <select className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none">
-                    <option>Dinas Pendidikan</option>
-                    <option>Dinas Kesehatan</option>
+                  <label className="block text-sm font-bold text-foreground mb-1">Perangkat Daerah / SKPD</label>
+                  <select 
+                    value={newUserData.skpdId} onChange={(e) => setNewUserData({...newUserData, skpdId: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none">
+                    <option value="">-- Pilih SKPD --</option>
+                    {skpdList.map(skpd => (
+                      <option key={skpd.id} value={skpd.id}>{skpd.name}</option>
+                    ))}
                   </select>
+                </div>
+
+                {/* New Fields */}
+                <div>
+                  <label className="block text-sm font-bold text-foreground mb-1">Jenis Kelamin</label>
+                  <select value={newUserData.jenisKelamin} onChange={(e) => setNewUserData({...newUserData, jenisKelamin: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none">
+                    <option value="">-- Pilih --</option>
+                    <option value="Laki-laki">Laki-laki</option>
+                    <option value="Perempuan">Perempuan</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-foreground mb-1">Jenis Jabatan</label>
+                  <input type="text" placeholder="Contoh: Fungsional Umum" 
+                    value={newUserData.jenisJabatan} onChange={(e) => setNewUserData({...newUserData, jenisJabatan: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-foreground mb-1">Golongan</label>
+                  <input type="text" placeholder="Contoh: III/b" 
+                    value={newUserData.golongan} onChange={(e) => setNewUserData({...newUserData, golongan: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-foreground mb-1">Eselon</label>
+                  <input type="text" placeholder="Contoh: II.a / Non Eselon" 
+                    value={newUserData.eselon} onChange={(e) => setNewUserData({...newUserData, eselon: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-foreground mb-1">Tingkat Pendidikan</label>
+                  <input type="text" placeholder="Contoh: S1 / S2" 
+                    value={newUserData.tingkatPendidikan} onChange={(e) => setNewUserData({...newUserData, tingkatPendidikan: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-foreground mb-1">Program Studi</label>
+                  <input type="text" placeholder="Contoh: Sistem Informasi" 
+                    value={newUserData.programStudi} onChange={(e) => setNewUserData({...newUserData, programStudi: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none" />
                 </div>
               </div>
             </div>
             <div className="p-6 bg-slate-50 border-t border-border flex justify-end gap-3">
               <button onClick={() => setIsAddModalOpen(false)} className="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">Batal</button>
-              <button onClick={() => setIsAddModalOpen(false)} className="px-4 py-2 text-sm font-bold text-primary-foreground bg-primary hover:bg-primary-hover rounded-lg transition-colors shadow-sm flex items-center gap-2"><Plus size={16}/> Simpan Pegawai</button>
+              <button onClick={createUser} className="px-4 py-2 text-sm font-bold text-primary-foreground bg-primary hover:bg-primary-hover rounded-lg transition-colors shadow-sm flex items-center gap-2"><Plus size={16}/> Simpan Pegawai</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 4. Edit Modal */}
+      {isEditModalOpen && selectedUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-border flex justify-between items-center">
+              <h3 className="font-black text-lg text-foreground">Edit Data Pegawai</h3>
+              <button onClick={() => setIsEditModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="col-span-1 md:col-span-2">
+                  <label className="block text-sm font-bold text-foreground mb-1">Nama Lengkap</label>
+                  <input type="text" placeholder="Masukkan nama..." 
+                    value={editUserData.name} onChange={(e) => setEditUserData({...editUserData, name: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-foreground mb-1">NIP</label>
+                  <input type="text" placeholder="18 digit NIP" 
+                    value={editUserData.nip} onChange={(e) => setEditUserData({...editUserData, nip: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-foreground mb-1">Perangkat Daerah / SKPD</label>
+                  <select 
+                    value={editUserData.skpdId} onChange={(e) => setEditUserData({...editUserData, skpdId: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none">
+                    <option value="">-- Pilih SKPD --</option>
+                    {skpdList.map(skpd => (
+                      <option key={skpd.id} value={skpd.id}>{skpd.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* New Fields */}
+                <div>
+                  <label className="block text-sm font-bold text-foreground mb-1">Jenis Kelamin</label>
+                  <select value={editUserData.jenisKelamin} onChange={(e) => setEditUserData({...editUserData, jenisKelamin: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none">
+                    <option value="">-- Pilih --</option>
+                    <option value="Laki-laki">Laki-laki</option>
+                    <option value="Perempuan">Perempuan</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-foreground mb-1">Jenis Jabatan</label>
+                  <input type="text" placeholder="Contoh: Fungsional Umum" 
+                    value={editUserData.jenisJabatan} onChange={(e) => setEditUserData({...editUserData, jenisJabatan: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-foreground mb-1">Golongan</label>
+                  <input type="text" placeholder="Contoh: III/b" 
+                    value={editUserData.golongan} onChange={(e) => setEditUserData({...editUserData, golongan: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-foreground mb-1">Eselon</label>
+                  <input type="text" placeholder="Contoh: II.a / Non Eselon" 
+                    value={editUserData.eselon} onChange={(e) => setEditUserData({...editUserData, eselon: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-foreground mb-1">Tingkat Pendidikan</label>
+                  <input type="text" placeholder="Contoh: S1 / S2" 
+                    value={editUserData.tingkatPendidikan} onChange={(e) => setEditUserData({...editUserData, tingkatPendidikan: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-foreground mb-1">Program Studi</label>
+                  <input type="text" placeholder="Contoh: Sistem Informasi" 
+                    value={editUserData.programStudi} onChange={(e) => setEditUserData({...editUserData, programStudi: e.target.value})}
+                    className="w-full px-4 py-2.5 bg-white border border-border rounded-xl focus:ring-2 focus:ring-primary focus:outline-none" />
+                </div>
+              </div>
+            </div>
+            <div className="p-6 bg-slate-50 border-t border-border flex justify-end gap-3">
+              <button onClick={() => setIsEditModalOpen(false)} className="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">Batal</button>
+              <button onClick={editUser} className="px-4 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm flex items-center gap-2"><CheckCircle size={16}/> Simpan Perubahan</button>
             </div>
           </div>
         </div>

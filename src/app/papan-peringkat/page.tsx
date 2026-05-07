@@ -121,7 +121,7 @@ export default function LeaderboardPage() {
                         <div>
                           <p className="font-bold text-foreground text-sm flex items-center gap-1.5">
                             {user.name}
-                            {user.rank <= 5 && <ShieldCheck size={14} className="text-success" title="Top 5 Regional" />}
+                            {user.rank <= 5 && <span title="Top 5 Regional"><ShieldCheck size={14} className="text-success" /></span>}
                           </p>
                           <p className="text-xs text-muted font-mono">{user.nip}</p>
                           {/* Mobile Unit View */}

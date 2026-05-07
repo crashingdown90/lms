@@ -69,7 +69,7 @@ export default function Header() {
             </Link>
             
             <Link 
-              href="/login" 
+              href="/api/auth/logout" 
               title="Keluar (Logout)"
               className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-error/10 text-error flex items-center justify-center hover:bg-error hover:text-white transition-all shadow-sm"
             >

@@ -1,8 +1,21 @@
 "use client";
 
-import { TrendingUp, HardDrive, Users, BookOpen, CheckCircle, Award, AlertCircle } from "lucide-react";
+import { TrendingUp, HardDrive, Users, BookOpen, CheckCircle, Award, AlertCircle, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export default function AdminOverview() {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/admin/dashboard")
+      .then(res => res.json())
+      .then(d => {
+        setData(d);
+        setLoading(false);
+      });
+  }, []);
+
   const monthlyData = [
     { month: "Jan", users: 40, label: "400" },
     { month: "Feb", users: 65, label: "650" },
@@ -12,18 +25,19 @@ export default function AdminOverview() {
     { month: "Jun", users: 70, label: "700" },
   ];
   
-  const skpdDistribution = [
-    { name: "Dinas Pendidikan", percentage: 35, color: "bg-primary" },
-    { name: "Dinas Kesehatan", percentage: 25, color: "bg-green-500" },
-    { name: "Kecamatan & Kelurahan", percentage: 20, color: "bg-amber-500" },
-    { name: "Diskominfo", percentage: 12, color: "bg-primary-hover" },
-    { name: "Lainnya", percentage: 8, color: "bg-slate-400" },
-  ];
-  
   const pendingApprovals = [
     { id: "REQ-091", type: "Validasi Sertifikat", name: "Andi Saputra", date: "Hari ini, 09:12" },
     { id: "REQ-092", type: "Reset Password", name: "Rina Kusuma", date: "Kemarin, 14:30" },
   ];
+
+  if (loading) return (
+    <div className="h-full min-h-[50vh] flex items-center justify-center">
+      <Loader2 className="animate-spin text-primary w-12 h-12" />
+    </div>
+  );
+
+  const metrics = data?.metrics || { activeUsers: 0, completedModules: 0, averageScore: 0, certificatesCount: 0 };
+  const skpdDistribution = data?.skpdDistribution || [];
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
@@ -85,7 +99,7 @@ export default function AdminOverview() {
             </div>
             <div className="text-right">
               <p className="text-xs text-muted font-bold uppercase tracking-wider mb-1">ASN Aktif Belajar</p>
-              <h3 className="text-3xl font-black text-foreground">3,240</h3>
+              <h3 className="text-3xl font-black text-foreground">{metrics.activeUsers}</h3>
             </div>
           </div>
           <div className="flex items-center gap-2 text-xs font-bold text-success bg-success/10 px-2 py-1 rounded inline-flex">↑ 12.5% bln ini</div>
@@ -99,7 +113,7 @@ export default function AdminOverview() {
             </div>
             <div className="text-right">
               <p className="text-xs text-muted font-bold uppercase tracking-wider mb-1">Modul Diselesaikan</p>
-              <h3 className="text-3xl font-black text-foreground">14.5k</h3>
+              <h3 className="text-3xl font-black text-foreground">{metrics.completedModules}</h3>
             </div>
           </div>
           <div className="flex items-center gap-2 text-xs font-bold text-success bg-success/10 px-2 py-1 rounded inline-flex">↑ 8.2% bln ini</div>
@@ -113,7 +127,7 @@ export default function AdminOverview() {
             </div>
             <div className="text-right">
               <p className="text-xs text-muted font-bold uppercase tracking-wider mb-1">Rata-rata Nilai</p>
-              <h3 className="text-3xl font-black text-foreground">88.4</h3>
+              <h3 className="text-3xl font-black text-foreground">{metrics.averageScore}</h3>
             </div>
           </div>
           <div className="flex items-center justify-between mt-2">
@@ -132,7 +146,7 @@ export default function AdminOverview() {
             </div>
             <div className="text-right">
               <p className="text-xs text-muted font-bold uppercase tracking-wider mb-1">Sertifikat Sah</p>
-              <h3 className="text-3xl font-black text-foreground">12.1k</h3>
+              <h3 className="text-3xl font-black text-foreground">{metrics.certificatesCount}</h3>
             </div>
           </div>
           <div className="flex items-center gap-2 text-xs font-bold text-[#141414] bg-accent/30 px-2 py-1 rounded inline-flex">
@@ -167,7 +181,7 @@ export default function AdminOverview() {
             <h3 className="font-bold text-foreground mb-1">Distribusi Peserta</h3>
             <p className="text-xs text-muted mb-6 border-b border-slate-100 pb-4">Berdasarkan asal Satuan Kerja (SKPD)</p>
             <div className="space-y-4">
-              {skpdDistribution.map((item, i) => (
+              {skpdDistribution.map((item: any, i: number) => (
                 <div key={i}>
                   <div className="flex justify-between text-xs font-bold mb-1.5">
                     <span className="text-foreground">{item.name}</span>
@@ -187,7 +201,7 @@ export default function AdminOverview() {
               <span className="w-6 h-6 bg-error text-white rounded-full flex items-center justify-center text-xs font-bold shadow-sm">{pendingApprovals.length}</span>
             </div>
             <div className="divide-y divide-border">
-              {pendingApprovals.map((task, i) => (
+              {pendingApprovals.map((task: any, i: number) => (
                 <div key={i} className="p-4 hover:bg-slate-50 transition-colors cursor-pointer group">
                   <div className="flex justify-between items-start mb-1">
                     <p className="text-xs font-bold text-primary">{task.id}</p>

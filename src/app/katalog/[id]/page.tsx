@@ -2,13 +2,36 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PlayCircle, Clock, BookOpen, User, Star, CheckCircle, FileText, MonitorPlay, Users, Award, ChevronLeft } from "lucide-react";
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import { verifyJwt } from "@/lib/auth";
+import { cookies } from "next/headers";
+import EnrollButton from "@/components/EnrollButton";
 
-export default function SyllabusPage({ params }: { params: { id: string } }) {
-  // In a real app, you would fetch the course details from an API based on params.id
-  // For this prototype, we'll use a static detailed object.
+export default async function SyllabusPage({ params }: { params: { id: string } }) {
+  const dbCourse = await prisma.course.findUnique({
+    where: { id: params.id }
+  });
+
+  if (!dbCourse) {
+    return <div className="min-h-screen flex items-center justify-center">Materi tidak ditemukan.</div>;
+  }
+
+  // Cek otorisasi user (opsional: bisa digunakan untuk UI yang berbeda)
+  const token = (await cookies()).get("auth-token")?.value;
+  let isEnrolled = false;
+  if (token) {
+    const payload = await verifyJwt(token);
+    if (payload) {
+      const progress = await prisma.progress.findUnique({
+        where: { userId_courseId: { userId: payload.id as string, courseId: dbCourse.id } }
+      });
+      if (progress) isEnrolled = true;
+    }
+  }
+
   const course = {
-    id: params.id,
-    title: "Pengantar Tata Kelola Pemerintahan Berbasis Digital",
+    id: dbCourse.id,
+    title: dbCourse.title,
     instructor: {
       name: "Dr. Budi Santoso, M.Si",
       title: "Widyaiswara Ahli Utama BKPSDM",
@@ -158,12 +181,7 @@ export default function SyllabusPage({ params }: { params: { id: string } }) {
                 
                 <p className="text-3xl font-black text-foreground text-center mb-6">Gratis <span className="text-sm font-normal text-muted">/ Khusus ASN</span></p>
                 
-                <Link 
-                  href={`/course/${course.id}`} 
-                  className="w-full py-4 bg-primary text-white text-lg font-bold rounded-xl shadow-[0_8px_20px_-5px_rgba(30,64,175,0.4)] hover:-translate-y-1 hover:shadow-[0_12px_25px_-5px_rgba(30,64,175,0.5)] transition-all flex items-center justify-center gap-2 mb-4"
-                >
-                  <MonitorPlay size={20} /> Mulai Belajar Sekarang
-                </Link>
+                <EnrollButton courseId={course.id} isEnrolled={isEnrolled} />
                 <p className="text-center text-xs text-muted mb-6">Materi ini diwajibkan untuk dipelajari tahun ini.</p>
                 
                 <div className="space-y-4 pt-6 border-t border-slate-100">

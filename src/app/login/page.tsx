@@ -15,31 +15,47 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccessMsg("");
     setIsLoading(true);
 
-    setTimeout(() => {
-      if (isRegister) {
-        // Simulasi pendaftaran berhasil
+    if (isRegister) {
+      // TODO: Pendaftaran API integrasi
+      setTimeout(() => {
         setIsLoading(false);
         setSuccessMsg("Pendaftaran berhasil! Silakan masuk dengan akun Anda.");
         setIsRegister(false);
         setPassword("");
-      } else {
-        // Simulasi proses autentikasi
-        if (username === "superadmin" && password === "superadmin") {
-          router.push("/admin");
-        } else if (username === "admin" && password === "admin") {
-          router.push("/");
-        } else {
-          setError("NIP/Username atau Kata Sandi salah. Silakan coba lagi.");
+      }, 1000);
+    } else {
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          setError(data.error || "NIP/Username atau Kata Sandi salah.");
           setIsLoading(false);
+          return;
         }
+
+        // Redirect based on role
+        if (data.user.role === "SUPER_ADMIN" || data.user.role === "ADMIN_SKPD") {
+          router.push("/admin");
+        } else {
+          router.push("/");
+        }
+      } catch (err) {
+        setError("Terjadi kesalahan sistem. Silakan coba lagi.");
+        setIsLoading(false);
       }
-    }, 1000);
+    }
   };
 
   return (
